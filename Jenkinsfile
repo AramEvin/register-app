@@ -73,7 +73,7 @@ pipeline {
 	stage("Trivy Scan") {
            steps {
                script {
-	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock -e TRIVY_TIMEOUT=5m aquasec/trivy image aramevinyan/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock -e TRIVY_TIMEOUT=20m aquasec/trivy image aramevinyan/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
                }
            }
        }
