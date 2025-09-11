@@ -84,6 +84,18 @@ pipeline {
                     sh "docker rmi ${IMAGE_NAME}:latest"
                }
           }
-       }    
+       } 
+	stage("Deploy to CD Server") {
+    	agent { label 'cd-server' }
+    		steps {
+        		sh """
+        		echo "${DOCKER_CREDS_PSW}" | docker login -u "${DOCKER_CREDS_USR}" --password-stdin
+        		docker pull ${IMAGE_NAME}:${IMAGE_TAG}
+        		docker stop ${APP_NAME} || true
+        		docker rm ${APP_NAME} || true
+        		docker run -d --name ${APP_NAME} --restart unless-stopped -p 8080:8080 ${IMAGE_NAME}:${IMAGE_TAG}"""
+    }
+}
+	
    }
 }
