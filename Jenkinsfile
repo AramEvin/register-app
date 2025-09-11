@@ -100,20 +100,19 @@ pipeline {
 	        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
 	            sh """
 	            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-	
 	            docker pull ${IMAGE_NAME}:${IMAGE_TAG}
-	
 	            docker stop ${APP_NAME} || true
 	            docker rm ${APP_NAME} || true
 	
 	            docker run -d --name ${APP_NAME} \
-	                --restart unless-stopped \
+	                -e APP_VERSION=${IMAGE_TAG} \
 	                -p 8080:8080 \
 	                ${IMAGE_NAME}:${IMAGE_TAG}
 	            """
 		        }
 		    }
 		}
+
 
 	
    }
