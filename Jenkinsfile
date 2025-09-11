@@ -93,6 +93,30 @@ pipeline {
 	        sh "docker ps || true"
 		    }
 		}
+
+	stage("Deploy to CD Server") {
+	    agent { label 'cd-server' }  // Запускаем stage на CD сервере
+	    steps {
+	        script {
+	            sh """
+	            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+	
+	            # Тянем новый образ из DockerHub
+	            docker pull ${IMAGE_NAME}:${IMAGE_TAG}
+	
+	            # Останавливаем и удаляем старый контейнер (если был)
+	            docker stop ${APP_NAME} || true
+	            docker rm ${APP_NAME} || true
+	
+	            # Запускаем новый контейнер
+	            docker run -d --name ${APP_NAME} \\
+	                --restart unless-stopped \\
+	                -p 8080:8080 \\
+	                ${IMAGE_NAME}:${IMAGE_TAG}
+	            """
+        }
+    }
+}
 	
    }
 }
