@@ -94,8 +94,8 @@ pipeline {
         		docker stop ${APP_NAME} || true
         		docker rm ${APP_NAME} || true
         		docker run -d --name ${APP_NAME} --restart unless-stopped -p 8080:8080 ${IMAGE_NAME}:${IMAGE_TAG}"""
-    }
-}
+    		}
+		}
 	
    }
 }
