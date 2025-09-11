@@ -85,6 +85,16 @@ pipeline {
                }
           }
        } 
+	stage("Debug CD Server") {
+    	agent { label 'cd-server' }
+		    steps {
+		        sh "whoami"
+		        sh "pwd"
+		        sh "docker --version"
+		        sh "docker ps || true"
+   		}
+	}	
+		
 	stage("Deploy to CD Server") {
     	agent { label 'cd-server' }
     		steps {
