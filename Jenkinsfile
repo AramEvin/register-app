@@ -86,13 +86,21 @@ pipeline {
           }
        } 
 	stage("Debug CD Server") {
-	    agent { label 'cd-server' }
-	    steps {
-	        sh "whoami"
-	        sh "docker --version"
-	        sh "docker ps || true"
-		    }
-		}
+    agent { label 'cd-server' }
+    steps {
+        sh "whoami"
+        sh "docker --version"
+        
+        // Список контейнеров (для отладки, необязательно)
+        sh "docker ps -a || true"
+
+        // Останавливаем все контейнеры, если есть
+        sh "docker stop \$(docker ps -aq) || true"
+
+        // Удаляем все контейнеры, если есть
+        sh "docker rm \$(docker ps -aq) || true"
+    }
+}
 
 	stage("Deploy to CD Server") {
 	    agent { label 'cd-server' }
